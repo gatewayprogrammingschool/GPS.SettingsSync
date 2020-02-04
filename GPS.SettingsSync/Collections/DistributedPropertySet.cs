@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace GPS.SettingsSync
+namespace GPS.SettingsSync.Collections
 {
     public sealed class DistributedPropertySet : ConcurrentDictionary<string, object>, IDistributedPropertySet
     {

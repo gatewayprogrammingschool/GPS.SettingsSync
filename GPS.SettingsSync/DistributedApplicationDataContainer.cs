@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using GPS.SettingsSync.Collections;
 
 namespace GPS.SettingsSync
 {

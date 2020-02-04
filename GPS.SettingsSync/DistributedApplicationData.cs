@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using GPS.SettingsSync.Collections;
 
 namespace GPS.SettingsSync
 {
