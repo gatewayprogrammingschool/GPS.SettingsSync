@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GPS.SettingsSync\GPS.SettingsSync.csproj" />
+    <ProjectReference Include="..\..\src\GPS.SettingsSync\GPS.SettingsSync.csproj" />
   </ItemGroup>
 
 </Project>
