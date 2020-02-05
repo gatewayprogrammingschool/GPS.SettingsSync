@@ -1,4 +1,4 @@
-﻿namespace GPS.SettingsSync
+﻿namespace GPS.SettingsSync.Core
 {
     public enum DistributedApplicationDataCreateDisposition
     {

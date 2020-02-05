@@ -1,11 +1,9 @@
-﻿using Xunit;
-using GPS.SettingsSync;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GPS.SettingsSync.Core;
+using Xunit;
 
-namespace GPS.SettingsSync.Tests
+namespace GPS.SettingsSyncTests
 {
     public class DistributedApplicationDataTests
     {
@@ -35,6 +33,7 @@ namespace GPS.SettingsSync.Tests
             Assert.True(container.Values.TryAdd(name2, value2));
 
             await DistributedApplicationData.Current.ClearAsync();
+            await Task.Delay(300); // For some reason the dictionary is not always yet cleared when the host thread is restarted.
 
             Assert.Empty(container.Values);
             Assert.Empty(DistributedApplicationData.Current.LocalSettings.Values);

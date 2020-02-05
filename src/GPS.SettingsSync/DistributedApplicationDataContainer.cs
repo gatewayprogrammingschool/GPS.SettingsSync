@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using GPS.SettingsSync.Collections;
+using GPS.SettingsSync.Core.Collections;
 
-namespace GPS.SettingsSync
+namespace GPS.SettingsSync.Core
 {
     public class DistributedApplicationDataContainer
     {
@@ -19,7 +18,7 @@ namespace GPS.SettingsSync
 
         public IDistributedPropertySet Values => _values ??= new DistributedPropertySet();
 
-        internal DistributedApplicationDataContainer(
+        public DistributedApplicationDataContainer(
             string name = "Temporary",
             DistributedApplicationDataLocality locality = DistributedApplicationDataLocality.Temporary)
         {
@@ -34,8 +33,8 @@ namespace GPS.SettingsSync
             DistributedApplicationDataLocality locality)
         {
             return Containers.ContainsKey(name) 
-                ? Containers[name] : 
-                _containers.TryAdd(name, new DistributedApplicationDataContainer(name, locality)) 
+                ? Containers[name] 
+                : _containers.TryAdd(name, new DistributedApplicationDataContainer(name, locality)) 
                     ? Containers[name] 
                     : null;
         }

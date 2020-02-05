@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using GPS.SettingsSync.Collections;
+using GPS.SettingsSync.Core.Collections;
 
-namespace GPS.SettingsSync
+namespace GPS.SettingsSync.Core
 {
     public sealed class DistributedApplicationData
     {

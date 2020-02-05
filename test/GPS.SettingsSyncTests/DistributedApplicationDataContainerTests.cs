@@ -1,10 +1,7 @@
-﻿using Xunit;
-using GPS.SettingsSync;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GPS.SettingsSync.Core;
+using Xunit;
 
-namespace GPS.SettingsSync.Tests
+namespace GPS.SettingsSyncTests
 {
     public class DistributedApplicationDataContainerTests
     {

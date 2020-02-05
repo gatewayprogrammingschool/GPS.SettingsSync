@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GPS.SettingsSync.Collections
+namespace GPS.SettingsSync.Core.Collections
 {
     public interface IObservableMap<K, V> : IDictionary<K, V>
     {

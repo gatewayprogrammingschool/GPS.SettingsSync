@@ -1,12 +1,10 @@
-﻿using Xunit;
-using GPS.SettingsSync;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
-using GPS.SettingsSync.Collections;
+using GPS.SettingsSync.Core;
+using GPS.SettingsSync.Core.Collections;
+using Xunit;
 
-namespace GPS.SettingsSync.Tests
+namespace GPS.SettingsSyncTests
 {
     public class DistributedPropertySetTests
     {

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Authors>The Sharp Ninja</Authors>
+    <Company>Gateway Programming School, Inc.</Company>
+    <Product>GPS Settings Sync</Product>
+    <Copyright>&amp;copy; 2020 - Gateway Programming School, Inc.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/gatewayprogrammingschool/GPS.SettingsSync</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>roaming, settings, dotnet, dotnetcore, uwp, roaming-settings</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

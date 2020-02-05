@@ -1,4 +1,4 @@
-﻿namespace GPS.SettingsSync.Collections
+﻿namespace GPS.SettingsSync.Core.Collections
 {
     public class MapChangedEventArgs<K> : IMapChangedEventArgs<K>
     {
