@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using GPS.RandomDataGenerator;
 using GPS.SettingsSync.Core;
 using GPS.SettingsSync.FilePersistence;
@@ -40,7 +41,9 @@ namespace GPS.SettingsSyncTests
                         typeof(YamlPersistenceProvider).FullName),
                     new KeyValuePair<string, string>(SETTINGS_SYNC_SETTINGS_FILE_OTHER_PROVIDER_ASSEMBLY,
                         "GPS.SettingsSync.FilePersistence.Yaml"),
-                    new KeyValuePair<string, string>(SETTINGS_SYNC_SETTINGS_FILE_EXTENSION, "yaml")
+                    new KeyValuePair<string, string>(SETTINGS_SYNC_SETTINGS_FILE_EXTENSION, "yaml"),
+                    new KeyValuePair<string, string>(SETTINGS_SYNC_DEFAULT_PATH_LOCAL, ".\\TestData\\Local"),
+                    new KeyValuePair<string, string>(SETTINGS_SYNC_DEFAULT_PATH_ROAMING, ".\\TestData\\Roaming"),
                 });
 
             ConfigureTests?.Invoke(configBuilder);
@@ -57,7 +60,7 @@ namespace GPS.SettingsSyncTests
                     var localData = data.Sets[0];
                     var roamingData = data.Sets[1];
 
-                    return new Metadata("testhost", defaultLocalData: localData, defaultRoamingData: roamingData);
+                    return new Metadata(Assembly.GetEntryAssembly()?.GetName().Name, defaultLocalData: localData, defaultRoamingData: roamingData);
                 })
                 .AddTransient<TestStartup, TestStartup>()
                 .AddTransient<SerializationData, SerializationData>()
