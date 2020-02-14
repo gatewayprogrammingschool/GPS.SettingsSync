@@ -1,15 +1,15 @@
-﻿
+﻿﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29721.120
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPS.SettingsSync.Core", "src\GPS.SettingsSync\GPS.SettingsSync.Core.csproj", "{515E157F-8BCC-4372-9E31-81B63B81BA4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPS.SettingsSync.Core", "GPS.SettingsSync\GPS.SettingsSync.Core.csproj", "{515E157F-8BCC-4372-9E31-81B63B81BA4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPS.SettingsSyncTests", "test\GPS.SettingsSyncTests\GPS.SettingsSyncTests.csproj", "{074EEB09-3595-4490-A9E7-35B8B77B2210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPS.SettingsSyncTests", "..\test\GPS.SettingsSyncTests\GPS.SettingsSyncTests.csproj", "{074EEB09-3595-4490-A9E7-35B8B77B2210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPS.SettingsSync.FilePersistence", "src\GPS.SettingsSync.FilePersistence\GPS.SettingsSync.FilePersistence.csproj", "{9176A109-F936-4D86-832C-43B2F4ED4F68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPS.SettingsSync.FilePersistence", "GPS.SettingsSync.FilePersistence\GPS.SettingsSync.FilePersistence.csproj", "{9176A109-F936-4D86-832C-43B2F4ED4F68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPS.SettingsSync.FilePersistence.Yaml", "src\GPS.SettingsSync.FilePersistence.Yaml\GPS.SettingsSync.FilePersistence.Yaml.csproj", "{BC16D969-6489-4305-9C3E-3339A75E9F08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPS.SettingsSync.FilePersistence.Yaml", "GPS.SettingsSync.FilePersistence.Yaml\GPS.SettingsSync.FilePersistence.Yaml.csproj", "{BC16D969-6489-4305-9C3E-3339A75E9F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

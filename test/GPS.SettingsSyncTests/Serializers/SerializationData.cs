@@ -9,7 +9,6 @@ using GPS.RandomDataGenerator.Options;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence;
 using GPS.SettingsSync.FilePersistence.Serializers;
-using GPS.SettingsSync.FilePersistence.Tests;
 using GPS.SettingsSync.FilePersistence.Yaml.Serializers;
 using Microsoft.Extensions.DependencyInjection;
 
