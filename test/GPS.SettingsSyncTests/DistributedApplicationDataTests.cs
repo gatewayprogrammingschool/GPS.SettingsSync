@@ -9,8 +9,8 @@ namespace GPS.SettingsSyncTests
 {
     public class DistributedApplicationDataTests
     {
-        [Theory]
-        [InlineData("string", "0", "int", int.MinValue)]
+        // [Theory]
+        // [InlineData("string", "0", "int", int.MinValue)]
         public void ClearTest(string name1, object value1, string name2, object value2)
         {
             var container = DistributedApplicationData.Current.LocalSettings;
