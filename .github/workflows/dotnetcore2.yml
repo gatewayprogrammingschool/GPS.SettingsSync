@@ -25,7 +25,10 @@ jobs:
 
         # Perform Testing
       - name: Test with dotnet
-        run: dotnet test ../test/GPS.SettingsSyncTests.csproj --configuration Debug --no-build
+        run: |
+              git config --global alias.root 'rev-parse --show-toplevel'
+              $root = $(git root) + "/test/GPS.SettingsSyncTests/GPS.SettingsSyncTests.csproj"
+              dotnet test $root --configuration Debug --no-build
 
   publish:
     needs: [build]

@@ -37,7 +37,7 @@ namespace GPS.SettingsSync.Core.Collections
         
         public new bool TryAdd(string key, object value)
         {
-            if (!base.TryAdd(key, value)) return false;
+            base.AddOrUpdate(key, value, (s, o) => value);
 
             if(EnableUpdates) MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemInserted));
 
