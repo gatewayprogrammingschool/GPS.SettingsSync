@@ -2,6 +2,7 @@ namespace GPS.SettingsSync.Core
 {
     public static class Constants
     {
+        public const string SETTINGS_USE_FILE = "SettingSync::UseFile";
         public const string SETTINGS_SYNC_SETTINGS_FILE_OTHER_PROVIDER_ASSEMBLY = "SettingsSync::SettingsFileOtherProviderAssembly";
         public const string SETTINGS_SYNC_SETTINGS_FILE_EXTENSION             = "SettingsSync::SettingsFileExtension";
         public const string SETTINGS_SYNC_SETTINGS_FILE_OTHER_PROVIDER         = "SettingsSync::SettingsFileOtherProvider";

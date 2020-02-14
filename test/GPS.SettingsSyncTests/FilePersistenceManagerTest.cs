@@ -23,29 +23,9 @@ namespace GPS.SettingsSyncTests
         public FilePersistenceManagerTest()
         {
             TestStartup.ConfigureServices -= TestStartupOnConfigureServices;
-            TestStartup.ConfigureTests -= TestStartupOnConfigureTests;
             TestStartup.ConfigureServices += TestStartupOnConfigureServices;
-            TestStartup.ConfigureTests += TestStartupOnConfigureTests;
         }
-
-        private IConfigurationBuilder TestStartupOnConfigureTests(IConfigurationBuilder configurationBuilder)
-        {
-            configurationBuilder.AddInMemoryCollection(new[]
-            {
-                new KeyValuePair<string, string>("SettingsSync::DefaultPathLocal"
-                    , Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), nameof(FilePersistenceManagerTest), "Local")),
-                new KeyValuePair<string, string>("SettingsSync::DefaultPathRoaming"
-                    , Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), nameof(FilePersistenceManagerTest), "Roaming")),
-                new KeyValuePair<string, string>("SettingSync::UseFile", true.ToString()),
-                new KeyValuePair<string, string>("SettingsSync::LocalPath"
-                    , Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), nameof(FilePersistenceManagerTest), "Local")),
-                new KeyValuePair<string, string>("SettingsSync::RoamingPath"
-                    , Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), nameof(FilePersistenceManagerTest), "Roaming")),
-            });
-
-            return configurationBuilder;
-        }
-
+        
         private IServiceCollection TestStartupOnConfigureServices(IServiceCollection serviceCollection, IConfigurationRoot configuration)
         {
             return serviceCollection;
@@ -145,7 +125,7 @@ namespace GPS.SettingsSyncTests
             var provider = TestStartup.Provider.GetService<IFilePersistenceProvider>();
 
             var fileData = provider.OpenFile(TestStartup.Provider.GetService<ISettingsMetadata>().AppName
-                , config["SettingsSync::LocalPath"]
+                , config[Constants.SETTINGS_SYNC_DEFAULT_PATH_LOCAL]
                 , SettingsScopes.Local);
 
             Assert.NotNull(fileData);

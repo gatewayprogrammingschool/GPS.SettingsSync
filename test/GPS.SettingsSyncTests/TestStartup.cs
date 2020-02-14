@@ -44,6 +44,7 @@ namespace GPS.SettingsSyncTests
                     new KeyValuePair<string, string>(SETTINGS_SYNC_SETTINGS_FILE_EXTENSION, "yaml"),
                     new KeyValuePair<string, string>(SETTINGS_SYNC_DEFAULT_PATH_LOCAL, ".\\TestData\\Local"),
                     new KeyValuePair<string, string>(SETTINGS_SYNC_DEFAULT_PATH_ROAMING, ".\\TestData\\Roaming"),
+                    new KeyValuePair<string, string>(Constants.SETTINGS_USE_FILE, true.ToString()),
                 });
 
             ConfigureTests?.Invoke(configBuilder);

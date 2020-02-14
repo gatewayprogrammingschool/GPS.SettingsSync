@@ -22,6 +22,11 @@ namespace GPS.SettingsSync.FilePersistence.Providers
 
         public string WriteFile(string name, string path, IDistributedPropertySet data)
         {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            
             var filePath = Path.Combine(path, name + $".{FileTypes.Binary}");
 
             var serializer = Provider.GetService<BinarySettingsSerializer>();
