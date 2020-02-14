@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <IsPackable>True</IsPackable>
+    <PackageId>GPS.SettingsSync.Core</PackageId>
     <Authors>The Sharp Ninja</Authors>
     <Company>Gateway Programming School, Inc.</Company>
     <Product>GPS Settings Sync</Product>
@@ -16,6 +18,12 @@
     <Title>GPS Settings Sync</Title>
     <Description>Allow create of local and roaming settings in Binary, XML or JSON format.</Description>
     <PackageProjectUrl>https://github.com/gatewayprogrammingschool/GPS.SettingsSync</PackageProjectUrl>
+    <PackageOutputPath>..\..\packages</PackageOutputPath>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+    <IncludeSource>True</IncludeSource>
+    <IncludeBuildOutput>True</IncludeBuildOutput>
+    <IncludeContentInPack>True</IncludeContentInPack>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
