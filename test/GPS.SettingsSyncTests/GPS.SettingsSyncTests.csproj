@@ -9,6 +9,9 @@
   <ItemGroup>
     <PackageReference Include="GPS.RandomDataGenerator" Version="1.1.4" />
     <PackageReference Include="GPS.RandomDataGenerator.BaseData" Version="1.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="3.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />

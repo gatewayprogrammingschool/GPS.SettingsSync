@@ -13,6 +13,18 @@
     <PackageTags>roaming, settings, dotnet, dotnetcore, uwp, roaming-settings</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>GPS Settings Sync</Title>
+    <Description>Allow create of local and roaming settings in Binary, XML or JSON format.</Description>
+    <PackageProjectUrl>https://github.com/gatewayprogrammingschool/GPS.SettingsSync</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
 </Project>

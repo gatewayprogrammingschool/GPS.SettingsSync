@@ -28,7 +28,7 @@ namespace GPS.SettingsSync.FilePersistence
             switch (args.DistributedCollectionChange)
             {
                 case DistributedCollectionChange.Reset:
-                    FilePersistenceManager.Current.ResetFile(this);
+                    FilePersistenceManager.Current.ResetFile((this.FileName, this.SettingsScope));
                     break;
 
                 case DistributedCollectionChange.ItemRemoved:

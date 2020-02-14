@@ -20,8 +20,10 @@ namespace GPS.SettingsSync.FilePersistence.Abstractions
             SettingsScopes settingsScope,
             IDistributedPropertySet currentValues);
 
-        bool DeleteFile(string name);
+        bool DeleteFile(string name, string path);
 
         FileTypes FileType { get; }
+
+        string FileExtension { get; }
     }
 }

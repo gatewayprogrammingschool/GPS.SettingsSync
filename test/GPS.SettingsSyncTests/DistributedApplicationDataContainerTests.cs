@@ -1,4 +1,5 @@
-﻿using GPS.SettingsSync.Core;
+﻿using System.Reflection;
+using GPS.SettingsSync.Core;
 using Xunit;
 
 namespace GPS.SettingsSyncTests
@@ -11,7 +12,7 @@ namespace GPS.SettingsSyncTests
             var container = DistributedApplicationData.Current.LocalSettings;
 
             Assert.NotNull(container);
-            Assert.Equal("Local", container.Name);
+            Assert.Equal(Assembly.GetEntryAssembly()?.GetName().Name, container.Name);
             Assert.Equal(DistributedApplicationDataLocality.Local, container.Locality);
             Assert.NotNull(container.Values);
         }
@@ -22,7 +23,7 @@ namespace GPS.SettingsSyncTests
             var container = DistributedApplicationData.Current.RoamingSettings;
 
             Assert.NotNull(container);
-            Assert.Equal("Roaming", container.Name);
+            Assert.Equal(Assembly.GetEntryAssembly()?.GetName().Name, container.Name);
             Assert.Equal(DistributedApplicationDataLocality.Roaming, container.Locality);
             Assert.NotNull(container.Values);
         }

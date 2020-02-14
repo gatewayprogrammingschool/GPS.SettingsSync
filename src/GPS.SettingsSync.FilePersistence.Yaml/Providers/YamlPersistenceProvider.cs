@@ -9,6 +9,8 @@ namespace GPS.SettingsSync.FilePersistence.Yaml.Providers
     {
         public override FileTypes FileType => FileTypes.Other;
 
+        public override string FileExtension => "Yaml";
+
         public YamlPersistenceProvider(
             YamlFileReader reader
             , YamlFileWriter writer

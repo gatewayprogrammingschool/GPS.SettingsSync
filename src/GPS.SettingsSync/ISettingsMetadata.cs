@@ -6,6 +6,6 @@ namespace GPS.SettingsSync.Core
     public interface ISettingsMetadata
     {
         string AppName { get; }
-        IReadOnlyDictionary<SettingsScopes, IDistributedPropertySet> BlankFile { get; }
+        IDictionary<SettingsScopes, IDistributedPropertySet> BlankFile { get; }
     }
 }

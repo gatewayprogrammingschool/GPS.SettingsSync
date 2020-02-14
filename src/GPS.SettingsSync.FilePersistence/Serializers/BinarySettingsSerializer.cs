@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using GPS.SettingsSync.Core.Collections;
@@ -29,22 +30,29 @@ namespace GPS.SettingsSync.FilePersistence.Serializers
 
         public IDistributedPropertySet Deserialize(byte[] source)
         {
-            using var stream = new MemoryStream(source);
-
-            var formatter = new BinaryFormatter
+            try
             {
-                AssemblyFormat = FormatterAssemblyStyle.Simple,
-                FilterLevel = TypeFilterLevel.Full,
-                TypeFormat = FormatterTypeStyle.TypesWhenNeeded
-            };
+                using var stream = new MemoryStream(source);
 
-            if(!(formatter.Deserialize(stream) is IDistributedPropertySet deserialized))
-            {
-                throw new ApplicationException(
-                    $"Source bytes note convertible to `IDistributedPropertySet`.");
+                var formatter = new BinaryFormatter
+                                {
+                                    AssemblyFormat = FormatterAssemblyStyle.Simple,
+                                    FilterLevel = TypeFilterLevel.Full,
+                                    TypeFormat = FormatterTypeStyle.TypesWhenNeeded
+                                };
+
+                if (!(formatter.Deserialize(stream) is IDistributedPropertySet deserialized))
+                {
+                    throw new ApplicationException(
+                        $"Source bytes note convertible to `IDistributedPropertySet`.");
+                }
+
+                return deserialized;
             }
-
-            return deserialized;
+            catch (SerializationException e) when (e.Message == "Attempting to deserialize an empty stream.") 
+            {
+                return new DistributedPropertySet();
+            }
         }
     }
 }

@@ -5,16 +5,19 @@ using System.Text.Json;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Abstractions;
 using GPS.SettingsSync.FilePersistence.Serializers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GPS.SettingsSync.FilePersistence.Providers
 {
     public class JsonFileWriter : IFileWriter
     {
+        public IServiceProvider Provider { get; }
         public ILogger<JsonFileWriter> Logger { get; }
 
-        public JsonFileWriter(ILogger<JsonFileWriter> logger)
+        public JsonFileWriter(IServiceProvider provider, ILogger<JsonFileWriter> logger)
         {
+            Provider = provider;
             Logger = logger;
         }
 
@@ -22,7 +25,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
         {
             var filePath = Path.Combine(path, name + ".json");
 
-            var serializer = new JsonSettingsSerializer();
+            var serializer = Provider.GetService<JsonSettingsSerializer>();
 
             var bytes = serializer.Serialize(data);
 

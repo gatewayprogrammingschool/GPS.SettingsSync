@@ -16,6 +16,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
         public ISettingsMetadata Metadata { get; }
 
         public abstract FileTypes FileType { get; }
+        public virtual string FileExtension => FileType.ToString();
 
         protected PersistenceProviderBase(ILogger logger, IFileReader reader, IFileWriter writer,
             IFileRemover remover, ISettingsMetadata metadata)
@@ -31,7 +32,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
             SettingsScopes settingsScope,
             IDistributedPropertySet seedValues = null)
         {
-            var filePath = Path.Combine(path, $"{name}.json");
+            var filePath = Path.Combine(path, $"{name}.{FileExtension}");
 
             if (!File.Exists(filePath))
             {
@@ -43,7 +44,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
 
         public DistributedApplicationDataContainer OpenFile(string name, string path, SettingsScopes settingsScope)
         {
-            var filePath = Path.Combine(path, $"{name}.json");
+            var filePath = Path.Combine(path, $"{name}.{this.FileExtension}");
 
             var data = Reader.ReadFile(name, path);
 
@@ -82,12 +83,16 @@ namespace GPS.SettingsSync.FilePersistence.Providers
         public DistributedApplicationDataContainer WriteFile(string name, string path, SettingsScopes settingsScope,
             IDistributedPropertySet currentValues)
         {
-            throw new System.NotImplementedException();
+            Writer.WriteFile(name, path, currentValues);
+
+            return settingsScope == SettingsScopes.Local
+                ? DistributedApplicationData.Current.LocalSettings
+                : DistributedApplicationData.Current.RoamingSettings;
         }
 
-        public bool DeleteFile(string name)
+        public bool DeleteFile(string name, string path)
         {
-            throw new System.NotImplementedException();
+            return Remover?.RemoveFile(name + $".{FileExtension}", path) != null;
         }
     }
 }

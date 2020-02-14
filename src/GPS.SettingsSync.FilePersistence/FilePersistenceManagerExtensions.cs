@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Reflection;
 using GPS.SettingsSync.Core;
+using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Abstractions;
 using GPS.SettingsSync.FilePersistence.Providers;
+using GPS.SettingsSync.FilePersistence.Serializers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using static GPS.SettingsSync.Core.Constants;
 
 namespace GPS.SettingsSync.FilePersistence
 {
@@ -12,24 +16,38 @@ namespace GPS.SettingsSync.FilePersistence
     {
         public static DistributedApplicationData AddFilePersistence(
             this DistributedApplicationData applicationData
+            , IServiceProvider provider
             , ISettingsMetadata metadata
             , SettingsScopes settingsScope = SettingsScopes.Both
             , string localRootPath = ".\\Local"
             , string roamingRootPath = ".\\Roaming")
         {
+            FilePersistenceManager.Build(provider);
+
             if(settingsScope == SettingsScopes.Both || settingsScope == SettingsScopes.Local)
             {
-                FilePersistenceManager.Current.AddApplicationData(applicationData.LocalSettings, 
-                    settingsScope, metadata.AppName, localRootPath);
+                FilePersistenceManager.Current.AddApplicationData(
+                    applicationData.LocalSettings, settingsScope);
             }
 
             if (settingsScope == SettingsScopes.Both || settingsScope == SettingsScopes.Roaming)
             {
-                FilePersistenceManager.Current.AddApplicationData(applicationData.RoamingSettings, 
-                    settingsScope, metadata.AppName, roamingRootPath);
+                FilePersistenceManager.Current.AddApplicationData(
+                    applicationData.RoamingSettings, settingsScope);
             }
 
+            applicationData.DataChanged += ApplicationDataOnDataChanged;
+
             return applicationData;
+        }
+
+        private static void ApplicationDataOnDataChanged(DistributedApplicationData sender, DistributedApplicationDataContainer container)
+        {
+            //var local = (FilePersistenceManager.Current.Metadata.AppName, SettingsScopes.Local);
+            //FilePersistenceManager.Current.UpdateFile(FilePersistenceManager.Current.ApplicationData[local]);
+
+            //var roaming = (FilePersistenceManager.Current.Metadata.AppName, SettingsScopes.Roaming);
+            //FilePersistenceManager.Current.UpdateFile(FilePersistenceManager.Current.ApplicationData[roaming]);
         }
 
 
@@ -44,7 +62,8 @@ namespace GPS.SettingsSync.FilePersistence
                     if (bool.TryParse(config["SettingSync::UseFile"], out var useFile) && useFile)
                     {
                         DistributedApplicationData.Current.AddFilePersistence(
-                            provider.GetService<ISettingsMetadata>()
+                            provider
+                            , provider.GetService<ISettingsMetadata>()
                             , SettingsScopes.Both
                             , config["SettingsSync::LocalPath"]
                             , config["SettingsSync::RoamingPath"]);
@@ -57,81 +76,49 @@ namespace GPS.SettingsSync.FilePersistence
         }
 
         public static IServiceCollection AddFilePersistenceManager(
-            this IServiceCollection serviceCollection
-            , Func<IServiceProvider, ISettingsMetadata> metadata)
+            this IServiceCollection serviceCollection)
         {
             serviceCollection
-                .AddSingleton<ISettingsMetadata>(metadata)
-                .AddTransient<IFileReader>(provider =>
-            {
-                var config = provider.GetService<IConfiguration>();
-
-                var fileTypeName = config["SettingsSync::FileType"];
-
-                Enum.TryParse(fileTypeName, out FileTypes fileType);
-
-                return fileType switch
+                .AddSingleton<JsonFileReader, JsonFileReader>()
+                .AddSingleton<JsonFileWriter, JsonFileWriter>()
+                .AddSingleton<XmlFileReader, XmlFileReader>()
+                .AddSingleton<XmlFileWriter, XmlFileWriter>()
+                .AddSingleton<JsonSettingsSerializer, JsonSettingsSerializer>()
+                .AddSingleton<XmlSettingsSerializer, XmlSettingsSerializer>()
+                .AddSingleton<BinarySettingsSerializer, BinarySettingsSerializer>()
+                .AddSingleton<IFileRemover, FileRemover>()
+                .AddSingleton<BinaryFileReader, BinaryFileReader>()
+                .AddSingleton<BinaryFileWriter, BinaryFileWriter>()
+                .AddSingleton<BinaryPersistenceProvider, BinaryPersistenceProvider>()
+                .AddSingleton<JsonPersistenceProvider, JsonPersistenceProvider>()
+                .AddSingleton<XmlPersistenceProvider, XmlPersistenceProvider>()
+                .AddSingleton<IFilePersistenceProvider>(provider =>
                 {
-                    FileTypes.Binary => new BinaryFileReader(provider.GetService<ILogger<BinaryFileReader>>()) as IFileReader,
-                    FileTypes.XML => new XmlFileReader(provider.GetService<ILogger<XmlFileReader>>()) as IFileReader,
-                    _ => new JsonFileReader(provider.GetService<ILogger<JsonFileReader>>()) as IFileReader
-                };
-            })
-                .AddTransient<IFileWriter>(provider =>
-            {
-                var config = provider.GetService<IConfiguration>();
+                    var configuration = provider.GetService<IConfiguration>();
+                    var fileProvider =
+                        (Enum.TryParse(configuration[$"SettingsSync::SettingsFileType"], out FileTypes fileType)
+                                ? fileType
+                                : FileTypes.Other) switch
+                            {
+                                FileTypes.Binary => provider.GetService<BinaryPersistenceProvider>(),
+                                FileTypes.XML => provider.GetService<XmlPersistenceProvider>(),
+                                FileTypes.JSON => provider.GetService<JsonPersistenceProvider>(),
+                                _ => GetProvider()
+                            };
 
-                var fileTypeName = config["SettingsSync::FileType"];
+                    return fileProvider;
 
-                Enum.TryParse(fileTypeName, out FileTypes fileType);
-
-                return fileType switch
-                {
-                    FileTypes.Binary => new BinaryFileWriter(provider.GetService<ILogger<BinaryFileWriter>>()) as IFileWriter,
-                    FileTypes.XML => new XmlFileWriter(provider.GetService<ILogger<XmlFileWriter>>()) as IFileWriter,
-                    _ => new JsonFileWriter(provider.GetService<ILogger<JsonFileWriter>>()) as IFileWriter
-                };
-            })
-                .AddTransient<IFilePersistenceProvider>(provider =>
-                {
-                    var config = provider.GetService<IConfiguration>();
-
-                    var fileTypeName = config["SettingsSync::FileType"];
-
-                    Enum.TryParse(fileTypeName, out FileTypes fileType);
-
-                    var persistenceProvider = fileType switch
+                    IFilePersistenceProvider GetProvider()
                     {
-                        FileTypes.Other => GetOtherPersistenceProvider(fileTypeName) as PersistenceProviderBase,
-                        FileTypes.Binary => new BinaryPersistenceProvider(
-                            provider.GetService<IFileReader>() as BinaryFileReader
-                            , provider.GetService<IFileWriter>() as BinaryFileWriter
-                            , provider.GetService<IFileRemover>()
-                            , provider.GetService<ILogger<BinaryPersistenceProvider>>()
-                            , metadata(provider)) as PersistenceProviderBase,
-                        FileTypes.XML => new XmlPersistenceProvider(
-                            provider.GetService<IFileReader>() as XmlFileReader
-                            , provider.GetService<IFileWriter>() as XmlFileWriter
-                            , provider.GetService<IFileRemover>()
-                            , provider.GetService<ILogger<XmlPersistenceProvider>>()
-                            , metadata(provider)) as PersistenceProviderBase,
-                        _ => new JsonPersistenceProvider(
-                            provider.GetService<IFileReader>() as JsonFileReader
-                            , provider.GetService<IFileWriter>() as JsonFileWriter
-                            , provider.GetService<IFileRemover>()
-                            , provider.GetService<ILogger<JsonPersistenceProvider>>()
-                            , metadata(provider)) as PersistenceProviderBase
-                    };
+                        var assemblyName = configuration[SETTINGS_SYNC_SETTINGS_FILE_OTHER_PROVIDER_ASSEMBLY];
+                        var typeName = configuration[SETTINGS_SYNC_SETTINGS_FILE_OTHER_PROVIDER];
+                        var assembly = Assembly.Load(assemblyName);
+                        var type = assembly.GetType(typeName, true, true);
 
-                    return persistenceProvider;
+                        return (IFilePersistenceProvider)ActivatorUtilities.CreateInstance(provider, type);
+                    }
                 })
-                .AddSingleton<FilePersistenceManager>(provider =>
-            {
-                var config = provider.GetService<IConfiguration>();
-                var manager = new FilePersistenceManager(config, metadata(provider), provider.GetService<IFilePersistenceProvider>());
-
-                return manager;
-            });
+                .AddSingleton<FilePersistenceManager, FilePersistenceManager>();
 
             return serviceCollection;
         }

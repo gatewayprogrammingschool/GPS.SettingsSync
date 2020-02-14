@@ -7,16 +7,19 @@ using System.Xml.Serialization;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Abstractions;
 using GPS.SettingsSync.FilePersistence.Serializers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GPS.SettingsSync.FilePersistence.Providers
 {
     public class XmlFileWriter : IFileWriter
     {
+        public IServiceProvider Provider { get; }
         public ILogger<XmlFileWriter> Logger { get; }
 
-        public XmlFileWriter(ILogger<XmlFileWriter> logger)
+        public XmlFileWriter(IServiceProvider provider, ILogger<XmlFileWriter> logger)
         {
+            Provider = provider;
             Logger = logger;
         }
 
@@ -24,7 +27,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
         {
             var filePath = Path.Combine(path, name + ".xml");
 
-            var serializer = new XmlSettingsSerializer();
+            var serializer = Provider.GetService<XmlSettingsSerializer>();
 
             var bytes = serializer.Serialize(data);
 

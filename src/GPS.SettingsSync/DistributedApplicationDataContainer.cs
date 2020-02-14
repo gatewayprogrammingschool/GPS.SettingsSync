@@ -16,7 +16,7 @@ namespace GPS.SettingsSync.Core
 
         public string Name { get; }
 
-        public IDistributedPropertySet Values => _values ??= new DistributedPropertySet();
+        public DistributedPropertySet Values => _values ??= new DistributedPropertySet();
 
         public DistributedApplicationDataContainer(
             string name = "Temporary",

@@ -4,24 +4,27 @@ using System.IO;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Abstractions;
 using GPS.SettingsSync.FilePersistence.Serializers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GPS.SettingsSync.FilePersistence.Providers
 {
     public class BinaryFileWriter : IFileWriter
     {
+        public IServiceProvider Provider { get; }
         public ILogger<BinaryFileWriter> Logger { get; }
 
-        public BinaryFileWriter(ILogger<BinaryFileWriter> logger)
+        public BinaryFileWriter(IServiceProvider provider, ILogger<BinaryFileWriter> logger)
         {
+            Provider = provider;
             Logger = logger;
         }
 
         public string WriteFile(string name, string path, IDistributedPropertySet data)
         {
-            var filePath = Path.Combine(path, name + ".bin");
+            var filePath = Path.Combine(path, name + $".{FileTypes.Binary}");
 
-            var serializer = new BinarySettingsSerializer();
+            var serializer = Provider.GetService<BinarySettingsSerializer>();
 
             var bytes = serializer.Serialize(data);
 

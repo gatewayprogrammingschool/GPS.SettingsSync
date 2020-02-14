@@ -33,11 +33,13 @@ namespace GPS.SettingsSync.Core.Collections
             }
         }
 
+        public bool EnableUpdates { get; set; } = true;
+        
         public new bool TryAdd(string key, object value)
         {
             if (!base.TryAdd(key, value)) return false;
 
-            MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemInserted));
+            if(EnableUpdates) MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemInserted));
 
             return true;
         }
@@ -119,7 +121,7 @@ namespace GPS.SettingsSync.Core.Collections
                 return false;
             }
 
-            MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemRemoved));
+            if(EnableUpdates) MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemRemoved));
 
             value = removed;
 
@@ -130,7 +132,7 @@ namespace GPS.SettingsSync.Core.Collections
         {
             if (!base.TryUpdate(key, newValue, comparisonValue)) return false;
 
-            MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemChanged));
+            if(EnableUpdates) MapChanged?.Invoke(this, new MapChangedEventArgs<string>(key, DistributedCollectionChange.ItemChanged));
 
             return true;
         }
@@ -139,13 +141,13 @@ namespace GPS.SettingsSync.Core.Collections
         {
             base.Clear();
 
-            MapChanged?.Invoke(this, new MapChangedEventArgs<string>((string)null, DistributedCollectionChange.Reset));
+            if(EnableUpdates) MapChanged?.Invoke(this, new MapChangedEventArgs<string>((string)null, DistributedCollectionChange.Reset));
         }
 
         public event MapChangedEventHandler<string, object> MapChanged;
         public IReadOnlyDictionary<string, object> AsReadOnlyDictionary()
         {
-            return (IReadOnlyDictionary<string, object>) this.Select(pair => new KeyValuePair<string, object>(pair.Key, pair.Value));
+            return (IReadOnlyDictionary<string, object>) this.ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
         public IDistributedPropertySet SetValues(IDictionary<string, object> data)
@@ -185,38 +187,51 @@ namespace GPS.SettingsSync.Core.Collections
 
             var doc = new XmlDocument();
 
-            doc.Load(reader);
-
-            var pairs = doc.DocumentElement.SelectNodes(
-                $"//{nameof(DistributedPropertySet)}/{nameof(Values)}").Cast<XmlElement>();
-
-            foreach (var pair in pairs)
+            try
             {
-                var key = pair.Attributes[nameof(KeyValuePair<string, object>.Key)].Value;
-                var type = pair.Attributes[nameof(Type)].Value;
-                var value = type switch
-                {
-                    "System.Boolean" => bool.TryParse(pair.InnerText, out var boolValue) ? boolValue : default,
-                    "System.Byte" => byte.TryParse(pair.InnerText, out var byteValue) ? byteValue : default,
-                    "System.SByte" => sbyte.TryParse(pair.InnerText, out var sbyteValue) ? sbyteValue : default,
-                    "System.Int16" => short.TryParse(pair.InnerText, out var shortValue) ? shortValue : default,
-                    "System.UInt16" => ushort.TryParse(pair.InnerText, out var ushortValue) ? ushortValue : default,
-                    "System.Int32" => int.TryParse(pair.InnerText, out var intValue) ? intValue : default,
-                    "System.UInt32" => uint.TryParse(pair.InnerText, out var uintValue) ? uintValue : default,
-                    "System.Int64" => long.TryParse(pair.InnerText, out var longValue) ? longValue : default,
-                    "System.UInt64" => ulong.TryParse(pair.InnerText, out var ulongValue) ? ulongValue : default,
-                    "System.Single" => float.TryParse(pair.InnerText, out var floatValue) ? floatValue : default,
-                    "System.Double" => double.TryParse(pair.InnerText, out var doubleValue) ? doubleValue : default,
-                    "System.Decimal" => decimal.TryParse(pair.InnerText, out var decimalValue) ? decimalValue : default,
-                    "System.DateTime" => DateTime.TryParse(pair.InnerText, out var dateTimeValue) ? dateTimeValue : default,
-                    "System.DateTimeOffset" => DateTimeOffset.TryParse(pair.InnerText, out var dateTimeOffsetValue) ? dateTimeOffsetValue : default,
-                    "System.String" => pair.InnerText,
-                    "System.Byte[]" => Convert.FromBase64String(pair.InnerText),
-                    "System.Guid" => Guid.TryParse(pair.InnerText, out var guidValue) ? guidValue : default,
-                    _ => (object)pair.InnerText
-                };
+                doc.Load(reader);
 
-                TryAdd(key, value);
+                var pairs = doc.DocumentElement.SelectNodes(
+                    $"//{nameof(DistributedPropertySet)}/{nameof(Values)}").Cast<XmlElement>();
+
+                foreach (var pair in pairs)
+                {
+                    var key  = pair.Attributes[nameof(KeyValuePair<string, object>.Key)].Value;
+                    var type = pair.Attributes[nameof(Type)].Value;
+                    var value = type switch
+                    {
+                        "System.Boolean" => bool.TryParse(pair.InnerText, out var boolValue) ? boolValue : default,
+                        "System.Byte" => byte.TryParse(pair.InnerText, out var byteValue) ? byteValue : default,
+                        "System.SByte" => sbyte.TryParse(pair.InnerText, out var sbyteValue) ? sbyteValue : default,
+                        "System.Int16" => short.TryParse(pair.InnerText, out var shortValue) ? shortValue : default,
+                        "System.UInt16" => ushort.TryParse(pair.InnerText, out var ushortValue) ? ushortValue : default,
+                        "System.Int32" => int.TryParse(pair.InnerText, out var intValue) ? intValue : default,
+                        "System.UInt32" => uint.TryParse(pair.InnerText, out var uintValue) ? uintValue : default,
+                        "System.Int64" => long.TryParse(pair.InnerText, out var longValue) ? longValue : default,
+                        "System.UInt64" => ulong.TryParse(pair.InnerText, out var ulongValue) ? ulongValue : default,
+                        "System.Single" => float.TryParse(pair.InnerText, out var floatValue) ? floatValue : default,
+                        "System.Double" => double.TryParse(pair.InnerText, out var doubleValue) ? doubleValue : default,
+                        "System.Decimal" => decimal.TryParse(pair.InnerText, out var decimalValue)
+                            ? decimalValue
+                            : default,
+                        "System.DateTime" => DateTime.TryParse(pair.InnerText, out var dateTimeValue)
+                            ? dateTimeValue
+                            : default,
+                        "System.DateTimeOffset" => DateTimeOffset.TryParse(pair.InnerText, out var dateTimeOffsetValue)
+                            ? dateTimeOffsetValue
+                            : default,
+                        "System.String" => pair.InnerText,
+                        "System.Byte[]" => Convert.FromBase64String(pair.InnerText),
+                        "System.Guid" => Guid.TryParse(pair.InnerText, out var guidValue) ? guidValue : default,
+                        _ => (object) pair.InnerText
+                    };
+
+                    TryAdd(key, value);
+                }
+            }
+            catch (XmlException e) when (e.Message == "Root element is missing.")
+            {
+                // Do nothing.
             }
         }
 

@@ -7,16 +7,19 @@ using System.Xml.Serialization;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Abstractions;
 using GPS.SettingsSync.FilePersistence.Serializers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GPS.SettingsSync.FilePersistence.Providers
 {
     public class XmlFileReader : IFileReader
     {
+        public IServiceProvider Provider { get; }
         public ILogger<XmlFileReader> Logger { get; }
 
-        public XmlFileReader(ILogger<XmlFileReader> logger)
+        public XmlFileReader(IServiceProvider provider, ILogger<XmlFileReader> logger)
         {
+            Provider = provider;
             Logger = logger;
         }
 
@@ -27,7 +30,7 @@ namespace GPS.SettingsSync.FilePersistence.Providers
 
             if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
 
-            var serializer = new XmlSettingsSerializer();
+            var serializer = Provider.GetService<XmlSettingsSerializer>();
 
             return serializer.Deserialize(File.ReadAllBytes(filePath));
         }

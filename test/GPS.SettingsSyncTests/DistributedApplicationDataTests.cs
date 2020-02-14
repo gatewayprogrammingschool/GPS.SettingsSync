@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using GPS.SettingsSync.Core;
 using Xunit;
@@ -9,12 +11,12 @@ namespace GPS.SettingsSyncTests
     {
         [Theory]
         [InlineData("string", "0", "int", int.MinValue)]
-        public async Task ClearAsyncTest(string name1, object value1, string name2, object value2)
+        public void ClearTest(string name1, object value1, string name2, object value2)
         {
             var container = DistributedApplicationData.Current.LocalSettings;
 
             Assert.NotNull(container);
-            Assert.Equal("Local", container.Name);
+            Assert.Equal(Assembly.GetEntryAssembly()?.GetName().Name, container.Name);
             Assert.Equal(DistributedApplicationDataLocality.Local, container.Locality);
             Assert.NotNull(container.Values);
 
@@ -23,6 +25,7 @@ namespace GPS.SettingsSyncTests
 
             container = DistributedApplicationData.Current.LocalSettings.CreateContainer("Temporary", DistributedApplicationDataLocality.Temporary);
 
+            Assert.Contains(DistributedApplicationData.Current.LocalSettings.Containers.Keys, s => s == "Temporary");
             Assert.NotNull(container);
             Assert.Equal("Temporary", container.Name);
             Assert.Equal(DistributedApplicationDataLocality.Temporary, container.Locality);
@@ -32,18 +35,10 @@ namespace GPS.SettingsSyncTests
             Assert.True(container.Values.TryAdd(name1, value1));
             Assert.True(container.Values.TryAdd(name2, value2));
 
-            await DistributedApplicationData.Current.ClearAsync();
-            await Task.Delay(300); // For some reason the dictionary is not always yet cleared when the host thread is restarted.
+            DistributedApplicationData.Current.Clear();
 
             Assert.Empty(container.Values);
             Assert.Empty(DistributedApplicationData.Current.LocalSettings.Values);
-        }
-
-        [Fact()]
-        public async Task GetForUserAsyncTest()
-        {
-            var data = await DistributedApplicationData.GetForUserAsync("me");
-            Assert.Same(DistributedApplicationData.Current, data);
         }
 
         [Fact()]
@@ -58,15 +53,5 @@ namespace GPS.SettingsSyncTests
             Assert.Equal(1u, DistributedApplicationData.Current.Version);
         }
 
-        [Fact()]
-        public void SignalDataChangedTest()
-        {
-            DistributedApplicationData.Current.DataChanged += (sender, args) =>
-            {
-                Assert.Same(DistributedApplicationData.Current.RoamingSettings.Values, args);
-            };
-
-            DistributedApplicationData.Current.SignalDataChanged();
-        }
     }
 }

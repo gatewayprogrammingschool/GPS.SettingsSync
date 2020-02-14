@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GPS.SettingsSync.Core;
 using GPS.SettingsSync.Core.Collections;
 using GPS.SettingsSync.FilePersistence.Serializers;
+using GPS.SettingsSync.FilePersistence.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -46,6 +48,7 @@ namespace GPS.SettingsSyncTests.Serializers
         public void DeserializeTest(DistributedPropertySet data, ISettingsSerializer serializer)
         {
             IDistributedPropertySet result = null;
+            var config = TestStartup.Configuration;
 
             try
             {
