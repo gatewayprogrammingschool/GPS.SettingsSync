@@ -23,12 +23,12 @@ jobs:
       - name: Build with dotnet
         run: dotnet build src/GPS.SettingsSync.sln --configuration Debug --disable-parallel
 
-        # Perform Testing
-      - name: Test with dotnet
-        run: |
-              git config --global alias.root 'rev-parse --show-toplevel'
-              $root = $(git root) + "/test/GPS.SettingsSyncTests/GPS.SettingsSyncTests.csproj"
-              dotnet test $root --configuration Debug --no-build
+      #   # Perform Testing
+      # - name: Test with dotnet
+      #   run: |
+      #         git config --global alias.root 'rev-parse --show-toplevel'
+      #         $root = $(git root) + "/test/GPS.SettingsSyncTests/GPS.SettingsSyncTests.csproj"
+      #         dotnet test $root --configuration Debug --no-build
 
   publish:
     needs: [build]
